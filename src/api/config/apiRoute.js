@@ -1,0 +1,10 @@
+export const userPath = `/Usuario`
+export const userSave = `/Usuario`
+export const appPath = `/v2/app`
+export const userLogin = `/user/login`
+export const rolePath = `/Rol`
+export const roleSave = `/Rol`
+export const moduloPath = `/Modulo`
+export const moduloSave = `/Modulo`
+export const rolmoduloPath = `/RolModulo`
+export const rolmoduloSave = `/RolModulo`

@@ -1,0 +1,81 @@
+{
+    "inputs":{
+        "user_email": {
+            "name": "email",
+            "type": "email",
+            "maxLength": "255",
+            "required": "true",
+            "foreninKey": "false",
+            "dba_name": "user_email",
+            "isTitle":"true"
+        },
+        "user_name": {
+            "name": "name",
+            "type": "text",
+            "maxLength": "255",
+            "required": "false",
+            "foreninKey": "false",
+            "dba_name": "user_email",
+            "isTitle":"true"
+        },
+        "user_lastname": {
+            "name": "lastname",
+            "type": "text",
+            "maxLength": "255",
+            "required": "false",
+            "foreninKey": "false",
+            "dba_name": "user_lastname",
+            "isTitle":"true"
+        },
+        "user_fullname": {
+            "name": "fullname",
+            "type": "text",
+            "maxLength": "255",
+            "required": "false",
+            "foreninKey": "false",
+            "dba_name": "user_fullname",
+            "isTitle":"true"
+        },
+        "user_phone": {
+            "name": "phone",
+            "type": "number",
+            "maxLength": "255",
+            "required": "false",
+            "foreninKey": "false",
+            "dba_name": "user_phone",
+            "isTitle":"false"
+        },
+
+        "id_role":{
+            "name": "role",
+            "type": "number",
+            "maxLength": "999",
+            "required": "true",
+            "foreninKey": "true",
+            "dba_name": "id_role",
+            "isTitle":"false",
+            "getEndpoint":"/role"
+        },
+        "id_gropus":{
+            "name": "User Groups",
+            "type": "object",
+            "maxLength": "255",
+            "required": "true",
+            "foreninKey": "false",
+            "manyToMany":"true",
+            "dba_name": "gropusXUser",
+            "isTitle":"false",
+            "getEndpoint":"/role"
+        }
+    },
+    "options":{
+        "edit":"true",
+        "show":"true",
+        "create":"true",
+        "delete":"true"
+    },
+    "endPoint":{
+
+    }
+   
+}
