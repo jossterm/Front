@@ -127,8 +127,6 @@
         })
       },
       editRolModulo (item) {
-        item.idRol = item.id;
-        item.nombreRol = item.nombre
         console.log(item)
         this.$router.push({
           name: 'RolModulosForm',

@@ -55,7 +55,6 @@
         v-model= "optionsSelect"
         :headers="headers"
         :items="items"
-        :search.sync="search"
         :sort-by="['name', 'office']"
         :sort-desc="[false, true]"
         item-key="idModulo"
@@ -68,10 +67,11 @@
       <template v-slot:[`item.data-table-select`]= "{select,item}">
             
          <v-simple-checkbox
-         v-model="item.permiso"
+         v-model="item.id"
          color="primary"
          style="margin-top: 0px; margin-bottom: 0px"
-        @input="select(selectCheck(item, $event))" />
+        @input="select(selectCheck(item, $event))"
+        :ripple="false" />
                     
    </template>
 
@@ -109,8 +109,7 @@
 </template>
 
 <script>
-  import i18n from '@/i18n'
-  import { getModulos, editRolModulo, getRolModulos } from '@/api/modules'
+import { getModulos, editRolModulo, getRolModulo } from '@/api/modules'
 
   export default {
     
@@ -129,6 +128,10 @@
           value:"nombre",
         },
        ],
+       profileData:{
+         idRol:0,
+         nombre:'',
+       },
        items:[],
        initialItems:[],
        searchLabel:"Buscar",
@@ -143,32 +146,34 @@
     methods: {
       selectAllPermissions(e){
         if(e.value){
-          this.items.forEach((item) => {item.default=true; item.permiso = true})
+          this.items.forEach((item) => {item.default=true; item.id = true})
 
         }else{
-          this.items.forEach((item) => {item.default = true; item.permiso = false})
+          this.items.forEach((item) => {item.default = true; item.id = false})
         }
       },
 
       async loadItemsData(){
         let serviceResponse = await getModulos();
         if(serviceResponse){
-          let modules = serviceResponse.map((el,index) => {return{
-            id: el.id,
+          let modules = Object.values(serviceResponse)
+            modules =  modules.map((el,index) => {return{
+            idModulo: el.id,
             nombre: el.nombre,
-            default: false,
+            default: true
           }})
+         
           this.items= modules
           // this.filterItemsSelectables(this.initialItems);
-          let serviceResponse2= await
-          getRolModulos(this.profileData.id);
-          let userPermissions = serviceResponse2.map((el) => {return{
-            idModulo: el.idModulo,
-            idRol: el.idRol,
-            permiso: el.activo,
-            default: false,
-          }});
-          this.optionsSelect = userPermissions
+          let serviceResponse2 = await getRolModulo(this.profileData.idRol);
+          let ModulosbyID = Object.values(serviceResponse2)
+            ModulosbyID = ModulosbyID.map((el) => {return{
+            idModulo: el.id,
+            nombreModulo: el.nombre,
+            default: false
+          }})
+          console.log (ModulosbyID)
+          this.optionsSelect = ModulosbyID
           this.items = this.items.map((item) => {
             let a = item
             this.optionsSelect.forEach((selectedItem) => {
@@ -191,16 +196,15 @@
       initialize () {
         this.profileData = this.$route.params.profileData;
         console.log(this.profileData);
-        this.title = "Rol:" + this.profileData.nombre;
-        
+        this.title = "Rol:" + this.profileData.nombre;    
       },
 
       selectCheck(item, selection){
-        item.default = true;
+        item.default = false;
         if(selection){
-          item.permiso = true;
+          item.id = true;
           this.optionsSelect.push(item);
-        }else {item.permiso = false;}
+        }else {item.id = false;}
         return selection
       },
       async submit () {
@@ -218,15 +222,15 @@
           this.items.forEach((item) => {
             if(item.default){
               body.push({
-                idRol: this.profileData.id,
-                idModulo : item.idModulo,
+                idRol: this.profileData.idRol,
+                id : item.id,
                 activo: item.permiso,
                 permisoId: item.permisoId
 
               });
             }
           })
-          let serviceResponse = await editRolModulo(this.profileData.id, body);
+          let serviceResponse = await editRolModulo(this.profileData.idRol);
           console.log(serviceResponse);
           if(serviceResponse){
             window.getApp.$emit("SHOW_MESSAGE", { text: "Guardado con éxito" });
@@ -237,15 +241,6 @@
           }
         }
       
-      },
-      async loadModulosData () {
-      let serviceResponse = await getModulos()
-     if (serviceResponse) {
-     this.modulos = Object.values(serviceResponse);
-     } else {
-      const params = { text: serviceResponse.message.text }
-          window.getApp.$emit('SHOW_ERROR', params)
-         }
       },
 
        async GuardarRolModulo() {
@@ -258,16 +253,6 @@
         }
      }
    }, 
-
-    async loadRolModulosData () {
-        let serviceResponse = await getRolModulos(this.roleData.id)
-        if (serviceResponse) {
-        this.rolmodulos = Object.values(serviceResponse);
-        } else {
-        const params = { text: serviceResponse.message.text }
-          window.getApp.$emit('SHOW_ERROR', params)
-        }
-      },
      
   };   
 </script>

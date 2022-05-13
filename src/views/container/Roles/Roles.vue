@@ -139,7 +139,7 @@
       async loadRolesData () {
         let serviceResponse = await getRoles()
         if (serviceResponse) {
-          this.items = Object.values(serviceResponse);
+          this.items = Object.values(serviceResponse)
         } else {
 
           const params = { text: serviceResponse.message.text }
